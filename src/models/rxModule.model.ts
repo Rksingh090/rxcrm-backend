@@ -38,19 +38,17 @@ const RXInputFieldSchema = new Schema<RxInputField>({
     type: AttributeSchema,
     required: true
   },
-  lookup_module: {
-    name: {
+  lookup: {
+    lookup_module_id: {
       type: String
     },
-    _id: {
-      type: String
-    }
-  },
-  lookup_field: {
-    name: {
+    lookup_module_name: {
       type: String
     },
-    _id: {
+    lookup_field_id: {
+      type: String
+    },
+    lookup_field_name: {
       type: String
     }
   }
@@ -58,10 +56,8 @@ const RXInputFieldSchema = new Schema<RxInputField>({
 
 // Define a Mongoose schema for the RxModule
 const RXModuleSchema = new Schema<RxModule>({
-  // Name of the form or collection of fields
   name: { type: String, required: true },
   displayName: { type: String, required: true },
-  // Array of input fields
   fields: { type: [RXInputFieldSchema], required: true },
 }, {
   timestamps: true

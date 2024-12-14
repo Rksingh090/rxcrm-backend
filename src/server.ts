@@ -6,6 +6,7 @@ import cors from "cors";
 
 import { connectToMongoDB } from "./config/db";
 import moduleRoutes from "./routes/rx/module";
+import recordRoutes from "./routes/rx/record";
 
 
 dotenv.config();
@@ -23,6 +24,7 @@ app.use(bodyParser.json());
 
 // Routes
 app.use("/api/rx/module", moduleRoutes);
+app.use("/api/rx/record", recordRoutes);
 
 // Start the server
 app.listen(PORT, () => {

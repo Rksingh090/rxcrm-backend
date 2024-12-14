@@ -4,6 +4,11 @@
             "CREATED": "RX_MODULE_CREATE",
             "ALL_LIST": "ALL_RX_MODULES_FETCHED",
             "MODULE_FETCH": "RX_MODULE_FETCHED"
+        },
+        "record": {
+            "INSERTED": "RECORD_INSERTED",
+            "INVALID_MODULE": "INVALID_MODULE_ID_OR_NAME",
+            "FETCHED_RECORDS": "RECORDS_FETCHED"
         }
     },
     "rest": {

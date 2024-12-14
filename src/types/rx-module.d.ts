@@ -6,22 +6,23 @@ export interface MongoBase {
     updatedAt?: string,
 }
 
+interface RxLookupField {
+    lookup_field_id?: string,
+    lookup_field_name?: string,
+    lookup_module_id?: string,
+    lookup_module_name?: string,
+}
 
 export interface RxInputField extends MongoBase {
+    _id: string,
     name: string,
     dataType: RxFieldType,
     displayName: string,
     attrs: Attribute
     value?: string,
-    lookup_module?: RxLookupField // for lookup field module
-    lookup_field?: RxLookupField // for lookup field module
+    lookup?: RxLookupField // for lookup field module    
 }
 
-
-interface RxLookupField {
-    name?: string,
-    _id?: string
-}
 
 export interface Attribute {
     defaultValue?: string;
