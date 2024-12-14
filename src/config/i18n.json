@@ -1,0 +1,14 @@
+{
+    "rx": {
+        "module": {
+            "CREATED": "RX_MODULE_CREATE",
+            "ALL_LIST": "ALL_RX_MODULES_FETCHED",
+            "MODULE_FETCH": "RX_MODULE_FETCHED"
+        }
+    },
+    "rest": {
+        "error": {
+            "unknown": "UNKNOWN_ERROR_OCCURRED"
+        }
+    }
+}
