@@ -1,11 +1,7 @@
 import { Router } from "express";
-import { insertRxRecord } from "../../services/rx/record";
+import { getRxRecordsForListing, getRxRecordsForLookupField, insertRxRecord } from "../../services/rx/record";
 import { RxModule } from "../../types/rx-module";
-import mongoose from "mongoose";
-import RxModuleModel from "../../models/rxModule.model";
-import { RestBadReqJson, RestErrorJson } from "../../config/rest";
-import i18n from "../../config/i18n.json";
-import { createOrGetModel } from "../../rx-utils/schema";
+import { RestErrorJson } from "../../config/rest";
 
 const router = Router();
 
@@ -28,37 +24,30 @@ router.get("/lookup/:moduleId/:fieldId", async (req, res) => {
         const { moduleId, fieldId } = req.params;
         const { page } = req.query;
 
-        const moduleJSON = await RxModuleModel.findById(moduleId).lean();
+        const record = await getRxRecordsForLookupField(moduleId, fieldId, Number(page));
+        res.json(record);
+        return;
+    } catch (error) {
+        res.status(500).json(RestErrorJson(error));
+        return;
+    }
+});
 
-        if (!moduleJSON?.name) {
-            res.status(400).json(RestBadReqJson(i18n.rx.record.INVALID_MODULE))
-            return
+// for different views like listing, record details etc. 
+router.get("/list/:moduleName", async (req, res) => {
+    try {
+        const { moduleName } = req.params;
+        let { perPage, page } = req.query;
+
+        if (!perPage || isNaN(Number(perPage))) {
+            perPage = String(10);
+        }
+        if (!page || isNaN(Number(page))) {
+            page = String(10)
         }
 
-        let onlyFieldToSelect: string = "";
-        if (fieldId) {
-            onlyFieldToSelect = moduleJSON.fields.find((item) => item._id.toString() === fieldId)?.name.toString() ?? "";
-        }
-
-        const dynamicModel = createOrGetModel(moduleJSON);
-        const chainCall = dynamicModel.find({});
-        if (onlyFieldToSelect) chainCall.select(onlyFieldToSelect);
-        const recordData = await chainCall.lean();
-
-        const jsonMapped = recordData.map((item) => {
-            return {
-                _id: item._id,
-                [fieldId]: item[onlyFieldToSelect] 
-            }
-        })
-
-        res.json({
-            message: i18n.rx.record.FETCHED_RECORDS,
-            status: "success",
-            data: {
-                records: jsonMapped
-            }
-        });
+        const record = await getRxRecordsForListing(moduleName, Number(perPage), Number(page));
+        res.json(record);
         return;
     } catch (error) {
         res.status(500).json(RestErrorJson(error));
