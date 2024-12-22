@@ -1,19 +1,22 @@
+import { Document, ObjectId } from "mongodb";
+import { rxConfig } from "../../config/config";
 import i18n from "../../config/i18n.json";
-import RXFormFieldModel from "../../models/rxModule.model";
+import { DbFindAll, DbFindOne, DbInsertDocument } from "../../db/mongo/crud";
 import { RestResponse } from "../../types/rest-res";
 import { RxModule } from "../../types/rx-module";
 
 export const createNewRxModule = async (data: RxModule): Promise<RestResponse> => {
     try {
-
-        const newModule = await RXFormFieldModel.create(data);
-        const moduleData = await newModule.save();
+        const newModule = await DbInsertDocument(rxConfig.DB.static_module, data);
 
         return {
             message: i18n.rx.module.CREATED,
             status: "success",
             data: {
-                module: moduleData
+                module: {
+                    ...data,
+                    _id: newModule.insertedId
+                }
             }
         }
     } catch (error: any) {
@@ -25,8 +28,15 @@ export const createNewRxModule = async (data: RxModule): Promise<RestResponse> =
 }
 export const getAllRxModulesList = async (): Promise<RestResponse> => {
     try {
+        const pipeline: Document[] = [];
+        pipeline.push({
+            $project: {
+                name: 1,
+                displayName: 1
+            }
+        });
 
-        const modulesList = await RXFormFieldModel.find({}).select("name displayName").lean();
+        const modulesList = await DbFindAll(rxConfig.DB.static_module, pipeline);
 
         return {
             message: i18n.rx.module.ALL_LIST,
@@ -45,10 +55,7 @@ export const getAllRxModulesList = async (): Promise<RestResponse> => {
 export const getRxModuleByName = async (name: string): Promise<RestResponse> => {
     try {
 
-        const rxModule = await RXFormFieldModel.findOne({
-            name: name
-        })
-            .lean();
+        const rxModule = await DbFindOne(rxConfig.DB.static_module, { name });
 
         return {
             message: i18n.rx.module.MODULE_FETCH,
@@ -63,12 +70,13 @@ export const getRxModuleByName = async (name: string): Promise<RestResponse> => 
             status: "error"
         }
     }
-} 
+}
+
 export const getRxModuleById = async (id: string): Promise<RestResponse> => {
     try {
 
-        const rxModule = await RXFormFieldModel.findById(id)
-            .lean();
+        const rxModule = await DbFindOne(rxConfig.DB.static_module, { _id: new ObjectId(id) });
+
 
         return {
             message: i18n.rx.module.MODULE_FETCH,

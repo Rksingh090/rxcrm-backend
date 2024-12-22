@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getRxRecordsForListing, getRxRecordsForLookupField, insertRxRecord } from "../../services/rx/record";
+import { getRxRecordAsModuleByModuleNameAndRecordId, getRxRecordsForListing, getRxRecordsForLookupField, insertRxRecord } from "../../services/rx/record";
 import { RxModule } from "../../types/rx-module";
 import { RestErrorJson } from "../../config/rest";
 
@@ -19,6 +19,7 @@ router.post("/create", async (req, res) => {
     }
 });
 
+// get list of record for the given lookup field id
 router.get("/lookup/:moduleId/:fieldId", async (req, res) => {
     try {
         const { moduleId, fieldId } = req.params;
@@ -33,7 +34,8 @@ router.get("/lookup/:moduleId/:fieldId", async (req, res) => {
     }
 });
 
-// for different views like listing, record details etc. 
+// get the list of records by moduleName
+// for different views like listing  etc. 
 router.get("/list/:moduleName", async (req, res) => {
     try {
         const { moduleName } = req.params;
@@ -47,6 +49,20 @@ router.get("/list/:moduleName", async (req, res) => {
         }
 
         const record = await getRxRecordsForListing(moduleName, Number(perPage), Number(page));
+        res.json(record);
+        return;
+    } catch (error) {
+        res.status(500).json(RestErrorJson(error));
+        return;
+    }
+});
+
+// for different views like listing, record details etc. 
+router.get("/:moduleName/:recordId", async (req, res) => {
+    try {
+        const { moduleName, recordId } = req.params;
+
+        const record = await getRxRecordAsModuleByModuleNameAndRecordId(moduleName, recordId);
         res.json(record);
         return;
     } catch (error) {

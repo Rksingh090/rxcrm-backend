@@ -8,7 +8,8 @@
         "record": {
             "INSERTED": "RECORD_INSERTED",
             "INVALID_MODULE": "INVALID_MODULE_ID_OR_NAME",
-            "FETCHED_RECORDS": "RECORDS_FETCHED"
+            "FETCHED_RECORDS": "RECORDS_FETCHED",
+            "RECORD_NOT_FOUND": "RECORD_NOT_FOUND"
         }
     },
     "rest": {

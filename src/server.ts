@@ -3,8 +3,6 @@ import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import cors from "cors";
 
-
-import { connectToMongoDB } from "./config/db";
 import moduleRoutes from "./routes/rx/module";
 import recordRoutes from "./routes/rx/record";
 
@@ -14,7 +12,6 @@ dotenv.config();
 const app = express();
 const PORT = 3000;
 
-connectToMongoDB();
 
 app.use(cors({
   origin: "http://localhost:5173"

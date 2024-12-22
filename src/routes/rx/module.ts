@@ -2,6 +2,7 @@ import { Router } from "express";
 import { createNewRxModule, getAllRxModulesList, getRxModuleById, getRxModuleByName } from "../../services/rx/module";
 import { RestErrorJson } from "../../config/rest";
 import { RxModule } from "../../types/rx-module";
+import { ObjectId } from "mongodb";
 
 const router = Router();
 
@@ -9,6 +10,13 @@ const router = Router();
 router.post("/create", async (req, res) => {
     try {
         const data: RxModule = req.body;
+        const moduleFieldsWithId:RxModule = {
+            ...data,
+            fields: data.fields.map((i) => {
+                i._id = new ObjectId().toString();
+                return i;
+            })
+        } 
         const moduleJSON = await createNewRxModule(data);
         res.json(moduleJSON);
         return;
@@ -32,7 +40,7 @@ router.get("/", async (req, res) => {
 });
 router.get("/:name", async (req, res) => {
     try {
-        const {name} = req.params;
+        const { name } = req.params;
         const rxModule = await getRxModuleByName(name);
         res.json(rxModule);
         return;
@@ -45,7 +53,7 @@ router.get("/:name", async (req, res) => {
 
 router.get("/id/:id", async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         const rxModule = await getRxModuleById(id);
         res.json(rxModule);
         return;
