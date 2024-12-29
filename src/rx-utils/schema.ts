@@ -49,6 +49,5 @@ export const createOrGetModel = async (moduleJson: RxModule) => {
   const modelName = moduleJson.name;
 
   const db = await connectToMongo();
-  const colls = await db.listCollections().toArray();
   return db.collection(modelName);
 };
